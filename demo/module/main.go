@@ -10,7 +10,6 @@ import (
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"github.com/gowon-irc/go-gowon"
-	"github.com/gowon-irc/gowon/pkg/message"
 	"github.com/jessevdk/go-flags"
 )
 
@@ -21,15 +20,15 @@ type Options struct {
 
 const mqttConnectRetryInternal = 5 * time.Second
 
-func testHandler(m message.Message) (string, error) {
+func testHandler(m gowon.Message) (string, error) {
 	return "testing", nil
 }
 
-func testHandler2(m message.Message) (string, error) {
+func testHandler2(m gowon.Message) (string, error) {
 	return "testing2", nil
 }
 
-func regexHandler(m message.Message) (string, error) {
+func regexHandler(m gowon.Message) (string, error) {
 	return fmt.Sprintf("{green}echoing: {red}%s{clear}", m.Msg), nil
 }
 

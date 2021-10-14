@@ -50,8 +50,8 @@ func (mr MessageRouter) Route(msg Message) (string, error) {
 	return "", nil
 }
 
-func (mr MessageRouter) Subscribe(client mqtt.Client, module string) {
-	client.Subscribe("/gowon/input", 0, func(client mqtt.Client, msg mqtt.Message) {
+func (mr MessageRouter) SubscribeChannel(client mqtt.Client, module string, inTopic string, outTopic string) {
+	client.Subscribe(inTopic, 0, func(client mqtt.Client, msg mqtt.Message) {
 		ms, err := CreateMessageStruct(msg.Payload())
 		if err != nil {
 			log.Print(err)
@@ -78,6 +78,14 @@ func (mr MessageRouter) Subscribe(client mqtt.Client, module string) {
 
 			return
 		}
-		client.Publish("/gowon/output", 0, false, mb)
+		client.Publish(outTopic, 0, false, mb)
 	})
+}
+
+func (mr MessageRouter) Subscribe(client mqtt.Client, module string) {
+	mr.SubscribeChannel(client, module, "/gowon/input", "/gowon/output")
+}
+
+func (mr MessageRouter) SubscribeMiddleware(client mqtt.Client, module string) {
+	mr.SubscribeChannel(client, module, "/gowon/output", "/gowon/input")
 }
