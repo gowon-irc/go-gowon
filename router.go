@@ -87,5 +87,5 @@ func (mr MessageRouter) Subscribe(client mqtt.Client, module string) {
 }
 
 func (mr MessageRouter) SubscribeMiddleware(client mqtt.Client, module string) {
-	mr.SubscribeChannel(client, module, "/gowon/output", "/gowon/input")
+	mr.SubscribeChannel(client, module, "/gowon/output", "/gowon/output")
 }
