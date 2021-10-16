@@ -50,42 +50,53 @@ func (mr MessageRouter) Route(msg Message) (string, error) {
 	return "", nil
 }
 
-func (mr MessageRouter) SubscribeChannel(client mqtt.Client, module string, inTopic string, outTopic string) {
-	client.Subscribe(inTopic, 0, func(client mqtt.Client, msg mqtt.Message) {
-		ms, err := CreateMessageStruct(msg.Payload())
-		if err != nil {
-			log.Print(err)
+func (mr MessageRouter) SubscribeChannel(opts *mqtt.ClientOptions, module string, inTopic string, outTopic string) {
+	oldOnConnect := opts.OnConnect
 
-			return
+	opts.OnConnect = func(client mqtt.Client) {
+		if oldOnConnect != nil {
+			oldOnConnect(client)
 		}
 
-		out, err := mr.Route(ms)
-		if err != nil {
-			log.Print(err)
+		client.Subscribe(inTopic, 0, func(client mqtt.Client, msg mqtt.Message) {
 
-			return
-		}
+			ms, err := CreateMessageStruct(msg.Payload())
+			if err != nil {
+				log.Print(err)
 
-		if out == "" {
-			return
-		}
+				return
+			}
 
-		ms.Module = module
-		ms.Msg = out
-		mb, err := json.Marshal(ms)
-		if err != nil {
-			log.Print(err)
+			out, err := mr.Route(ms)
+			if err != nil {
+				log.Print(err)
 
-			return
-		}
-		client.Publish(outTopic, 0, false, mb)
-	})
+				return
+			}
+
+			if out == "" {
+				return
+			}
+
+			ms.Module = module
+			ms.Msg = out
+			mb, err := json.Marshal(ms)
+			if err != nil {
+				log.Print(err)
+
+				return
+			}
+			client.Publish(outTopic, 0, false, mb)
+		})
+
+		log.Printf("Subscription to %s complete", inTopic)
+	}
 }
 
-func (mr MessageRouter) Subscribe(client mqtt.Client, module string) {
-	mr.SubscribeChannel(client, module, "/gowon/input", "/gowon/output")
+func (mr MessageRouter) Subscribe(opts *mqtt.ClientOptions, module string) {
+	mr.SubscribeChannel(opts, module, "/gowon/input", "/gowon/output")
 }
 
-func (mr MessageRouter) SubscribeMiddleware(client mqtt.Client, module string) {
-	mr.SubscribeChannel(client, module, "/gowon/output", "/gowon/output")
+func (mr MessageRouter) SubscribeMiddleware(opts *mqtt.ClientOptions, module string) {
+	mr.SubscribeChannel(opts, module, "/gowon/output", "/gowon/output")
 }
