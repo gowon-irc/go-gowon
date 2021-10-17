@@ -24,7 +24,7 @@ const ErrorMessageNoBodyMsg = "message body does not contain any message content
 
 const ErrorMessageNoDestinationMsg = "message body does not contain a destination"
 
-func getCommand(msg string) string {
+func GetCommand(msg string) string {
 	if strings.HasPrefix(msg, ".") {
 		return strings.TrimPrefix(strings.Fields(msg)[0], ".")
 	}
@@ -32,7 +32,7 @@ func getCommand(msg string) string {
 	return ""
 }
 
-func getArgs(msg string) string {
+func GetArgs(msg string) string {
 	if !strings.HasPrefix(msg, ".") {
 		return msg
 	}
@@ -59,11 +59,11 @@ func CreateMessageStruct(body []byte) (m Message, err error) {
 	}
 
 	if m.Command == "" {
-		m.Command = getCommand(m.Msg)
+		m.Command = GetCommand(m.Msg)
 	}
 
 	if m.Args == "" {
-		m.Args = getArgs(m.Msg)
+		m.Args = GetArgs(m.Msg)
 	}
 
 	return m, nil
