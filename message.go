@@ -8,12 +8,19 @@ import (
 )
 
 type Message struct {
-	Module  string `json:"module"`
-	Msg     string `json:"msg"`
-	Nick    string `json:"nick,omitempty"`
-	Dest    string `json:"dest"`
-	Command string `json:"command"`
-	Args    string `json:"args"`
+	Module    string            `json:"module"`
+	Nick      string            `json:"nick,omitempty"`
+	Code      string            `json:"code"`
+	Raw       string            `json:"raw"`
+	Host      string            `json:"host"`
+	Source    string            `json:"source"`
+	User      string            `json:"user"`
+	Arguments []string          `json:"arguments"`
+	Tags      map[string]string `json:"tags"`
+	Msg       string            `json:"msg,omitempty"`
+	Dest      string            `json:"dest,omitempty"`
+	Command   string            `json:"command,omitempty"`
+	Args      string            `json:"args,omitempty"`
 }
 
 const ErrorMessageParseMsg = "message couldn't be parsed as message json"
