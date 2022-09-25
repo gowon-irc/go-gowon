@@ -1,6 +1,6 @@
 module github.com/gowon-irc/go-gowon/demo/module
 
-go 1.17
+go 1.19
 
 replace github.com/gowon-irc/go-gowon => ../..
 
